@@ -1,39 +1,44 @@
-import React from 'react';
-import home from "../assets/home1.jpg";
-import Nav from '../components/Nav';
-import { SiViaplay } from "react-icons/si";
-import Logos from '../components/Logos';
-import Cardspage from '../components/Cardspage';
-import ExploreCourses from '../components/ExploreCourses';
-import About from '../components/About';
+import React from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import Nav from '../components/Nav' 
+import Card from '../components/Card'
+import Leaderboard from '../components/Leaderboard' 
+import { FaUserGraduate, FaChalkboardTeacher, FaLayerGroup } from "react-icons/fa";
+import { RiSecurePaymentFill } from "react-icons/ri";
+import { BiSupport } from "react-icons/bi";
+import home from "../assets/home1.jpg"; 
 import ai from '../assets/ai.png';
 import ai1 from '../assets/SearchAi.png';
+import { SiViaplay } from "react-icons/si";
+import Logos from '../components/Logos';
+import About from '../components/About';
 import ReviewPage from '../components/ReviewPage';
 import Footer from '../components/Footer';
-import Leaderboard from '../components/Leaderboard';
-import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux'; // Added to access real-time XP
-import { FaTrophy, FaArrowRight } from 'react-icons/fa';
 
 function Home() {
-  const navigate = useNavigate();
-  const { userData } = useSelector((state) => state.user); // Get synced XP
+  const navigate = useNavigate()
+  const { courseData } = useSelector((state) => state.course)
+  const { userData } = useSelector((state) => state.user)
 
-  // Logic to calculate progress to next rank
+  const featuredCourses = courseData?.slice(0, 3) || []
+
+  // Progress Bar Logic
   const getNextRankInfo = (xp) => {
-    if (xp >= 1500) return { next: "MAXED", remaining: 0, percent: 100 };
-    if (xp >= 1000) return { next: "Terminator", remaining: 1500 - xp, percent: (xp / 1500) * 100 };
-    if (xp >= 500) return { next: "Master", remaining: 1000 - xp, percent: (xp / 1000) * 100 };
-    if (xp >= 200) return { next: "Expert", remaining: 500 - xp, percent: (xp / 500) * 100 };
-    return { next: "Apprentice", remaining: 200 - xp, percent: (xp / 200) * 100 };
+    const currentXp = xp || 0;
+    if (currentXp >= 1500) return { next: "MAXED", percent: 100 };
+    if (currentXp >= 1000) return { next: "Terminator", percent: (currentXp / 1500) * 100 };
+    if (currentXp >= 500) return { next: "Master", percent: (currentXp / 1000) * 100 };
+    if (currentXp >= 200) return { next: "Expert", percent: (currentXp / 500) * 100 };
+    return { next: "Apprentice", percent: (currentXp / 200) * 100 };
   };
 
-  const progress = getNextRankInfo(userData?.xp || 0);
+  const progress = getNextRankInfo(userData?.xp);
 
   return (
-    <div className='w-full overflow-x-hidden bg-slate-50 font-sans'>
+    <div className="min-h-screen bg-white font-sans overflow-x-hidden">
       
-      {/* --- HERO SECTION --- */}
+      {/* 1. HERO SECTION */}
       <div className='w-full lg:h-[90vh] h-[80vh] relative'>
         <div className="absolute top-0 left-0 w-full z-50">
            <Nav/>
@@ -51,10 +56,10 @@ function Home() {
               Your Career Path
             </h2>
             <div className='flex flex-col md:flex-row items-center gap-6 w-full justify-center'>
-              <button className='px-8 py-3 border-2 border-white text-white rounded-xl text-lg font-medium flex items-center gap-3 hover:bg-white hover:text-blue-900 transition-all duration-300' onClick={() => navigate("/allcourses")}>
+              <button className='px-8 py-3 border-2 border-white text-white rounded-xl text-lg font-medium flex items-center gap-3 hover:bg-white hover:text-blue-900 transition-all duration-300 backdrop-blur-sm' onClick={() => navigate("/allcourses")}>
                 View all Courses <SiViaplay className='w-6 h-6' />
               </button>
-              <button className='px-8 py-3 bg-blue-600 text-white rounded-xl text-lg font-medium flex items-center gap-3 shadow-lg hover:bg-blue-700 hover:scale-105 transition-all' onClick={() => navigate("/searchwithai")}>
+              <button className='px-8 py-3 bg-blue-600 text-white rounded-xl text-lg font-medium flex items-center gap-3 shadow-lg shadow-blue-500/50 hover:bg-blue-700 hover:scale-105 transition-all duration-300' onClick={() => navigate("/searchwithai")}>
                 Search with AI 
                 <img src={ai} className='w-8 h-8 rounded-full hidden lg:block border border-blue-400' alt="AI" />
                 <img src={ai1} className='w-8 h-8 rounded-full lg:hidden border border-blue-400' alt="AI" />
@@ -63,79 +68,168 @@ function Home() {
         </div>
       </div>
 
-      {/* --- PERSONAL XP HIGHLIGHT SECTION (NEW) --- */}
-      {userData && (
-        <section className="bg-white pt-10 px-4">
-          <div className="max-w-4xl mx-auto bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl p-6 shadow-xl flex flex-col md:flex-row items-center justify-between text-white gap-6">
-            <div className="flex items-center gap-5">
-              <div className="bg-white/20 p-4 rounded-2xl backdrop-blur-md">
-                <FaTrophy className="text-4xl text-yellow-300" />
-              </div>
-              <div>
-                <p className="text-blue-100 text-sm font-bold uppercase tracking-widest">Your Current Progress</p>
-                <h3 className="text-2xl font-black">{userData.xp || 0} XP — {userData.rank || 'Novice'}</h3>
-              </div>
-            </div>
-
-            <div className="flex-1 w-full max-w-xs">
-              <div className="flex justify-between text-xs mb-2 font-bold uppercase">
-                <span>Next Rank: {progress.next}</span>
-                <span>{Math.round(progress.percent)}%</span>
-              </div>
-              <div className="w-full bg-white/20 h-3 rounded-full overflow-hidden">
-                <div 
-                  className="bg-yellow-400 h-full transition-all duration-1000 shadow-[0_0_10px_#facc15]" 
-                  style={{ width: `${progress.percent}%` }}
-                ></div>
-              </div>
-              <p className="text-[10px] mt-2 text-blue-100 text-right">
-                {progress.remaining > 0 ? `${progress.remaining} XP to go` : "Maximum Rank Achieved!"}
-              </p>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* --- GLOBAL LEADERBOARD SECTION --- */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-black text-slate-800 uppercase tracking-tighter">
-              The Terminator Hall of Fame
-            </h2>
-            <p className="text-blue-600 font-bold mt-2 text-lg">
-              Top 10 Learners dominating the platform right now
-            </p>
-          </div>
-          
-          <div className="flex flex-col lg:flex-row items-center justify-center gap-12">
-            <div className="lg:w-1/3 text-center lg:text-left">
-               <h3 className="text-2xl font-bold text-slate-700 mb-4">Level Up Your Badge</h3>
-               <p className="text-slate-500 mb-6 leading-relaxed">
-                 Every lecture earns you <span className="text-blue-600 font-bold">50 XP</span>. Beat the high scores to claim your spot on the Global Leaderboard.
+      {/* 2. PROGRESS & LEADERBOARD SECTION */}
+      <div className="bg-white py-16 px-6">
+        {/* User Progress Banner */}
+        {userData && (
+          <div className="max-w-5xl mx-auto bg-blue-600 text-white p-6 rounded-2xl flex flex-col md:flex-row justify-between items-center shadow-xl mb-16 transform hover:scale-[1.01] transition-all">
+            <div className="text-left mb-4 md:mb-0">
+               <h2 className="text-xs font-bold uppercase tracking-widest opacity-80 mb-1">Your Current Rank</h2>
+               <p className="text-3xl font-black">
+                 {userData.xp || 0} XP <span className="text-blue-200 mx-2">|</span> <span className="text-yellow-300">{userData.rank || "Novice"}</span>
                </p>
-               <button 
-                 onClick={() => navigate("/allcourses")}
-                 className="flex items-center gap-3 bg-slate-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-600 transition-all shadow-lg mx-auto lg:mx-0 group"
-               >
-                 Earn More XP <FaArrowRight className="group-hover:translate-x-2 transition-transform" />
-               </button>
+            </div>
+            <div className="w-full md:w-1/3">
+               <div className="flex justify-between text-xs mb-2 font-bold opacity-90">
+                  <span>NEXT: {progress.next}</span>
+                  <span>{Math.round(progress.percent)}%</span>
+               </div>
+               <div className="w-full bg-blue-900/50 rounded-full h-3">
+                  <div className="bg-yellow-400 h-3 rounded-full transition-all duration-1000" style={{ width: `${progress.percent}%` }}></div>
+               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Hall of Fame Header */}
+        <div className="text-center space-y-4 mb-12">
+            <h1 className="text-4xl md:text-5xl font-black text-slate-900 uppercase tracking-tighter">
+                The Terminator Hall of Fame
+            </h1>
+            <p className="text-blue-600 font-bold text-lg">
+                Top 10 Learners dominating the platform right now
+            </p>
+            <div className="w-24 h-1.5 bg-yellow-400 mx-auto rounded-full"></div>
+        </div>
+
+        {/* Leaderboard Grid */}
+        <div className="max-w-6xl mx-auto flex flex-col lg:flex-row items-start justify-center gap-12">
+            <div className="lg:w-1/3 text-center lg:text-left sticky top-24">
+                <h3 className="text-2xl font-bold text-slate-800 mb-4">Compete & Win</h3>
+                <p className="text-slate-500 leading-relaxed mb-8">
+                    Every lecture you complete earns you <span className="font-bold text-blue-600">50 XP</span>. 
+                    Climb the ranks, unlock the <span className="font-bold text-slate-900">Terminator Badge</span>, 
+                    and showcase your skills to the world.
+                </p>
+                <button 
+                  onClick={() => navigate('/allcourses')}
+                  className="bg-slate-900 text-white px-8 py-3 rounded-xl font-bold hover:bg-blue-600 transition-all shadow-lg w-full md:w-auto"
+                >
+                    Start Earning XP
+                </button>
             </div>
             <div className="w-full lg:w-2/3">
-              <Leaderboard />
+                <Leaderboard />
             </div>
-          </div>
         </div>
-      </section>
+      </div>
 
-      {/* --- REST OF SECTIONS --- */}
-      <div className='bg-slate-50'><Logos/></div>
-      <div className="bg-white"><ExploreCourses/><Cardspage/></div>
-      <div className="bg-blue-50"><About/></div>
-      <div className="bg-white py-16"><ReviewPage/></div>
-      <Footer/>
+      {/* 3. FEATURED COURSES SECTION */}
+      <div className="bg-gray-50 py-20 px-6 border-t border-gray-100">
+         <div className="max-w-7xl mx-auto">
+             <h2 className="text-3xl font-bold text-slate-900 mb-10 text-center">Featured Courses</h2>
+             
+             {/* Course Grid */}
+             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+                {featuredCourses.length > 0 ? (
+                    featuredCourses.map((course) => (
+                        <Card 
+                            key={course._id} 
+                            id={course._id} 
+                            title={course.title} 
+                            category={course.category} 
+                            price={course.price} 
+                            thumbnail={course.thumbnail} 
+                        />
+                    ))
+                ) : (
+                    <p className="text-center col-span-full text-gray-500 italic">No courses available yet.</p>
+                )}
+             </div>
+
+             {/* View All Button */}
+             <div className="flex justify-center">
+                <button 
+                    onClick={() => navigate('/allcourses')} 
+                    className="bg-black text-white text-base px-10 py-3 rounded-full font-bold shadow-xl hover:scale-105 hover:bg-gray-900 transition-all duration-300"
+                >
+                    View all Courses
+                </button>
+             </div>
+         </div>
+      </div>
+
+      {/* 4. ABOUT SECTION (Fixed "TLE Terminators" Text) */}
+      <div className="bg-white py-24 px-6">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-16">
+            
+            {/* Left: Blue Box with "TLE Terminators" Text */}
+            <div className="w-full md:w-1/2 h-80 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl flex items-center justify-center shadow-2xl relative overflow-hidden group p-4">
+                <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
+                
+                {/* UPDATED TEXT HERE */}
+                <span className="text-white font-black text-5xl md:text-6xl text-center opacity-20 group-hover:opacity-40 transition-opacity duration-500 leading-tight">
+                  TLE Terminators
+                </span>
+
+                <div className="absolute bottom-6 left-6 bg-white/20 backdrop-blur-md p-4 rounded-xl border border-white/30">
+                    <p className="text-white font-bold text-sm">Empowering 1000+ Students</p>
+                </div>
+            </div>
+
+            {/* Right: Content */}
+            <div className="w-full md:w-1/2 space-y-8">
+                <div>
+                    <p className="text-blue-600 font-bold uppercase tracking-widest text-sm mb-2">Why Choose Us?</p>
+                    <h2 className="text-4xl md:text-5xl font-bold text-slate-900 leading-tight">
+                        We Maximize Your Learning Potential
+                    </h2>
+                </div>
+                <p className="text-slate-600 leading-relaxed text-lg">
+                    We provide a modern Learning Management System to simplify online education, 
+                    track progress with gamification, and enhance student-instructor collaboration.
+                </p>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100 hover:border-blue-200 transition-colors">
+                        <div className="bg-white p-3 rounded-full shadow-sm text-blue-600 text-xl"><FaLayerGroup /></div>
+                        <span className="font-semibold text-slate-800">Gamified Learning</span>
+                    </div>
+                    <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100 hover:border-blue-200 transition-colors">
+                        <div className="bg-white p-3 rounded-full shadow-sm text-blue-600 text-xl"><FaChalkboardTeacher /></div>
+                        <span className="font-semibold text-slate-800">Expert Trainers</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+      </div>
+
+      {/* 5. FOOTER FEATURES */}
+      <div className="bg-slate-900 py-16 border-t border-slate-800 text-slate-400">
+          <div className="max-w-7xl mx-auto px-6 flex flex-wrap justify-center gap-10 md:justify-between text-sm md:text-base">
+              <div className="flex items-center gap-3 group cursor-default">
+                  <FaUserGraduate className="text-2xl text-white group-hover:text-blue-400 transition-colors" />
+                  <span className="font-medium group-hover:text-white transition-colors">20k+ Online Courses</span>
+              </div>
+              <div className="flex items-center gap-3 group cursor-default">
+                  <RiSecurePaymentFill className="text-2xl text-white group-hover:text-blue-400 transition-colors" />
+                  <span className="font-medium group-hover:text-white transition-colors">Lifetime Access</span>
+              </div>
+              <div className="flex items-center gap-3 group cursor-default">
+                  <span className="text-2xl text-white font-bold group-hover:text-blue-400 transition-colors">$</span>
+                  <span className="font-medium group-hover:text-white transition-colors">Value For Money</span>
+              </div>
+              <div className="flex items-center gap-3 group cursor-default">
+                  <BiSupport className="text-2xl text-white group-hover:text-blue-400 transition-colors" />
+                  <span className="font-medium group-hover:text-white transition-colors">Lifetime Support</span>
+              </div>
+          </div>
+      </div>
+
+      <Footer />
+
     </div>
-  );
+  )
 }
 
-export default Home;
+export default Home
