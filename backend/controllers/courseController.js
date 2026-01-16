@@ -159,12 +159,14 @@ export const editLecture = async (req,res) => {
           if(!lecture){
             return res.status(404).json({message:"Lecture not found"})
         }
-        const mediaResult = await uploadMediaWithAudio(req.file.buffer);
-        // console.log("Media Result:", mediaResult);
+        if(req.file){
+            const mediaResult = await uploadMediaWithAudio(req.file.buffer);
+            // console.log("Media Result:", mediaResult);
 
-        if (mediaResult) {
-          lecture.videoUrl = mediaResult.videoUrl;
-          lecture.audioUrl = mediaResult.audioUrl;
+            if (mediaResult) {
+            lecture.videoUrl = mediaResult.videoUrl;
+            lecture.audioUrl = mediaResult.audioUrl;
+            }
         }
         if(lectureTitle){
             lecture.lectureTitle = lectureTitle

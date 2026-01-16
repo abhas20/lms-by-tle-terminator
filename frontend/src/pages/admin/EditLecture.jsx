@@ -138,6 +138,7 @@ import { serverUrl } from "../../App";
 import { setLectureData } from "../../redux/lectureSlice";
 import { toast } from "react-toastify";
 import { ClipLoader } from "react-spinners";
+import { CollapsibleVideo } from "./PreviousVideo";
 
 function EditLecture() {
   const navigate = useNavigate();
@@ -146,6 +147,7 @@ function EditLecture() {
   const { lectureData } = useSelector((state) => state.lecture);
 
   const selectedLecture = lectureData.find((l) => l._id === lectureId);
+  // console.log(selectedLecture)
 
   const [videoUrl, setVideoUrl] = useState(null);
   const [lectureTitle, setLectureTitle] = useState(
@@ -161,16 +163,20 @@ function EditLecture() {
   useEffect(() => {
     axios
       .get(serverUrl + `/api/quiz/${lectureId}`, { withCredentials: true })
-      .then((r) => setQuiz(r.data))
+      .then((r) => {setQuiz(r.data)})
       .catch(() => setQuiz(null));
+
+    // console.log(quiz)
   }, [lectureId]);
 
   const editLecture = async () => {
     setLoading(true);
     try {
       const formData = new FormData();
+      if (videoUrl) {
+        formData.append("videoUrl", videoUrl);
+      }
       formData.append("lectureTitle", lectureTitle);
-      formData.append("videoUrl", videoUrl);
       formData.append("isPreviewFree", isPreviewFree);
 
       const result = await axios.post(
@@ -222,18 +228,16 @@ function EditLecture() {
             {!quiz ? (
               <button
                 onClick={() =>
-                  navigate(`/admin/add-quiz/${lectureId}/${courseId}`)
+                  navigate(`/admin/edit-quiz/${lectureId}/${courseId}`)
                 }
-                className="flex items-center gap-2 px-3 py-1 rounded bg-indigo-600 text-white text-sm"
-              >
+                className="flex items-center gap-2 px-3 py-1 rounded bg-indigo-600 text-white text-sm">
                 <FaPlus /> Add Quiz
               </button>
             ) : (
               <div className="flex gap-2">
                 <button
-                  onClick={() => navigate(`/admin/edit-quiz/${quiz._id}`)}
-                  className="flex items-center gap-2 px-3 py-1 rounded bg-green-600 text-white text-sm"
-                >
+                  onClick={() => navigate(`/admin/edit-quiz/${lectureId}/${courseId}/${quiz._id}`)}
+                  className="flex items-center gap-2 px-3 py-1 rounded bg-green-600 text-white text-sm">
                   <FaPen /> Edit
                 </button>
 
@@ -246,8 +250,7 @@ function EditLecture() {
                     toast.success("Quiz Deleted");
                     setQuiz(null);
                   }}
-                  className="flex items-center gap-2 px-3 py-1 rounded bg-red-600 text-white text-sm"
-                >
+                  className="flex items-center gap-2 px-3 py-1 rounded bg-red-600 text-white text-sm">
                   <FaTrash />
                 </button>
               </div>
@@ -265,8 +268,7 @@ function EditLecture() {
         <button
           className="px-4 py-2 bg-red-600 text-white rounded-md"
           disabled={loading1}
-          onClick={removeLecture}
-        >
+          onClick={removeLecture}>
           {loading1 ? <ClipLoader size={20} color="white" /> : "Remove Lecture"}
         </button>
 
@@ -318,7 +320,6 @@ function EditLecture() {
             </div>
           </label>
         </div>
-
         <label className="flex items-center gap-2">
           <input
             type="checkbox"
@@ -326,11 +327,14 @@ function EditLecture() {
           />
           Is this video FREE
         </label>
+        {selectedLecture.videoUrl && 
+        <CollapsibleVideo videoUrl={selectedLecture.videoUrl} />
+        }
+
 
         <button
           onClick={editLecture}
-          className="w-full bg-black text-white py-3 rounded"
-        >
+          className="w-full bg-black text-white py-3 rounded">
           {loading ? <ClipLoader size={20} color="white" /> : "Update Lecture"}
         </button>
       </div>

@@ -82,9 +82,9 @@ import Course from "../models/courseModel.js";
 /* ================= CREATE QUIZ ================= */
 export const createQuiz = async (req, res) => {
   try {
-    const { quizTitle, courseId, lectureId, questions } = req.body;
+    const { quizTitle, courseId, lectureId, questions,duration } = req.body;
 
-    if (!quizTitle || !courseId || !lectureId || !questions) {
+    if (!quizTitle || !courseId || !lectureId || !questions || !duration) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -108,6 +108,7 @@ export const createQuiz = async (req, res) => {
       courseId,
       lectureId,
       questions,
+      duration,
       createdBy: req.userId,
     });
 
@@ -121,7 +122,7 @@ export const createQuiz = async (req, res) => {
 export const getQuizByLecture = async (req, res) => {
   try {
     const quiz = await Quiz.findOne({ lectureId: req.params.lectureId });
-    if (!quiz) return res.status(404).json({ message: "Quiz not found" });
+    // if (!quiz) return res.status(404).json({ message: "Quiz not found" });
     res.json(quiz);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -131,12 +132,13 @@ export const getQuizByLecture = async (req, res) => {
 /* ================= UPDATE QUIZ ================= */
 export const updateQuiz = async (req, res) => {
   try {
-    const { questions, questionsTitle } = req.body;
+    const { questions, questionsTitle,duration } = req.body;
     const quiz = await Quiz.findByIdAndUpdate(
       req.params.quizId,
       {
         quizTitle: questionsTitle,
         questions: questions,
+        duration: duration,
       },
       {
         new: true,
