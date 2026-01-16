@@ -13,6 +13,8 @@ import attentionRouter from "./routes/attentionRoute.js"
 import uploadRouter from "./routes/upload.js"
 
 import quizRouter from "./routes/quizRoute.js";
+import analyticsRoutes from "./routes/analyticsRoutes.js";
+
 
 dotenv.config()
 
@@ -34,6 +36,7 @@ app.use("/api/attention", attentionRouter)
 app.use("/api/divide", uploadRouter)
 app.use("/api/quiz", quizRouter);
 
+app.use("/api/analytics", analyticsRoutes);
 app.get("/" , (req,res)=>{
     res.send("Hello From Server")
 })
