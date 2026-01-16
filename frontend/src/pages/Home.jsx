@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import Nav from '../components/Nav' 
-import Card from '../components/Card'
+import Card from '../components/Card' 
 import Leaderboard from '../components/Leaderboard' 
 import { FaUserGraduate, FaChalkboardTeacher, FaLayerGroup } from "react-icons/fa";
 import { RiSecurePaymentFill } from "react-icons/ri";
@@ -11,9 +11,6 @@ import home from "../assets/home1.jpg";
 import ai from '../assets/ai.png';
 import ai1 from '../assets/SearchAi.png';
 import { SiViaplay } from "react-icons/si";
-import Logos from '../components/Logos';
-import About from '../components/About';
-import ReviewPage from '../components/ReviewPage';
 import Footer from '../components/Footer';
 
 function Home() {
@@ -140,6 +137,8 @@ function Home() {
                             category={course.category} 
                             price={course.price} 
                             thumbnail={course.thumbnail} 
+                            // --- FIX: PASS REVIEWS ARRAY DIRECTLY ---
+                            reviews={course.reviews} 
                         />
                     ))
                 ) : (
@@ -159,19 +158,14 @@ function Home() {
          </div>
       </div>
 
-      {/* 4. ABOUT SECTION (Fixed "TLE Terminators" Text) */}
+      {/* 4. ABOUT SECTION */}
       <div className="bg-white py-24 px-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center gap-16">
             
-            {/* Left: Blue Box with "TLE Terminators" Text */}
-            <div className="w-full md:w-1/2 h-80 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl flex items-center justify-center shadow-2xl relative overflow-hidden group p-4">
+            {/* Left: Blue Box with TLE Text */}
+            <div className="w-full md:w-1/2 h-80 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl flex items-center justify-center shadow-2xl relative overflow-hidden group">
                 <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
-                
-                {/* UPDATED TEXT HERE */}
-                <span className="text-white font-black text-5xl md:text-6xl text-center opacity-20 group-hover:opacity-40 transition-opacity duration-500 leading-tight">
-                  TLE Terminators
-                </span>
-
+                <span className="text-white font-black text-8xl opacity-20 group-hover:opacity-40 transition-opacity duration-500">TLE</span>
                 <div className="absolute bottom-6 left-6 bg-white/20 backdrop-blur-md p-4 rounded-xl border border-white/30">
                     <p className="text-white font-bold text-sm">Empowering 1000+ Students</p>
                 </div>
