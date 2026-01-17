@@ -7,6 +7,7 @@ import { serverUrl } from "../../App";
 import { setLectureData } from "../../redux/lectureSlice";
 import { toast } from "react-toastify";
 import { ClipLoader } from "react-spinners";
+import { CollapsibleVideo } from "../../components/PreviousVideo";
 
 function EditLecture() {
   const navigate = useNavigate();
@@ -118,19 +119,21 @@ function EditLecture() {
   return (
     <div className="min-h-screen bg-gray-100 p-4 md:p-6">
       <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg p-6 space-y-6">
-        
         {/* HEADER */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate(`/createlecture/${courseId}`)}
-              className="p-2 hover:bg-gray-100 rounded-full transition"
-            >
+              className="p-2 hover:bg-gray-100 rounded-full transition">
               <FaArrowLeft className="text-xl" />
             </button>
             <div>
-              <h2 className="text-2xl font-bold text-gray-800">Update Lecture</h2>
-              <p className="text-gray-500 text-sm">Course: {selectedLecture.lectureTitle}</p>
+              <h2 className="text-2xl font-bold text-gray-800">
+                Update Lecture
+              </h2>
+              <p className="text-gray-500 text-sm">
+                Course: {selectedLecture.lectureTitle}
+              </p>
             </div>
           </div>
         </div>
@@ -140,7 +143,9 @@ function EditLecture() {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <h3 className="font-bold text-lg text-gray-800">Lecture Quiz</h3>
-              <p className="text-sm text-gray-600">Manage quiz for this lecture</p>
+              <p className="text-sm text-gray-600">
+                Manage quiz for this lecture
+              </p>
             </div>
 
             {!quiz ? (
@@ -148,20 +153,28 @@ function EditLecture() {
                 onClick={() =>
                   navigate(`/admin/edit-quiz/${lectureId}/${courseId}`)
                 }
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition"
-              >
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition">
                 <FaPlus /> Add Quiz
               </button>
             ) : (
               <div className="flex gap-2">
                 <button
-                  onClick={() => navigate(`/admin/edit-quiz/${lectureId}/${courseId}/${quiz._id}`)}
+                  onClick={() =>
+                    navigate(
+                      `/admin/edit-quiz/${lectureId}/${courseId}/${quiz._id}`,
+                    )
+                  }
                   className="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-600 text-white hover:bg-green-700 transition">
                   <FaPen /> Edit Quiz
                 </button>
                 <button
                   onClick={async () => {
-                    if (!window.confirm("Are you sure you want to delete this quiz?")) return;
+                    if (
+                      !window.confirm(
+                        "Are you sure you want to delete this quiz?",
+                      )
+                    )
+                      return;
                     try {
                       await axios.delete(serverUrl + `/api/quiz/${quiz._id}`, {
                         withCredentials: true,
@@ -172,8 +185,7 @@ function EditLecture() {
                       toast.error("Failed to delete quiz");
                     }
                   }}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition"
-                >
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700 transition">
                   <FaTrash /> Delete
                 </button>
               </div>
@@ -182,7 +194,9 @@ function EditLecture() {
 
           {quiz && (
             <div className="mt-4 p-3 bg-white rounded-lg border">
-              <p className="font-medium text-gray-800">{quiz.questions.length} Questions</p>
+              <p className="font-medium text-gray-800">
+                {quiz.questions.length} Questions
+              </p>
               <p className="text-sm text-gray-600 mt-1">Quiz ID: {quiz._id}</p>
             </div>
           )}
@@ -203,6 +217,9 @@ function EditLecture() {
               required
             />
           </div>
+          {selectedLecture.videoUrl && (
+            <CollapsibleVideo videoUrl={selectedLecture.videoUrl} />
+          )}
 
           {/* VIDEO UPLOAD */}
           <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 hover:border-gray-400 transition">
@@ -215,7 +232,7 @@ function EditLecture() {
                   {videoFile ? "New Video Selected" : "Update Lecture Video"}
                 </p>
                 <p className="text-sm text-gray-500 mb-4">
-                  {selectedLecture.videoUrl && !videoFile 
+                  {selectedLecture.videoUrl && !videoFile
                     ? "Current video is available. Upload a new one to replace it."
                     : "MP4, MOV, WebM up to 500MB"}
                 </p>
@@ -294,8 +311,12 @@ function EditLecture() {
               className="h-5 w-5 text-black focus:ring-black rounded"
             />
             <label htmlFor="preview-free" className="cursor-pointer">
-              <p className="font-medium text-gray-800">Make this lecture FREE preview</p>
-              <p className="text-sm text-gray-600">Users can watch without enrollment</p>
+              <p className="font-medium text-gray-800">
+                Make this lecture FREE preview
+              </p>
+              <p className="text-sm text-gray-600">
+                Users can watch without enrollment
+              </p>
             </label>
           </div>
         </div>
@@ -305,16 +326,24 @@ function EditLecture() {
           <button
             onClick={removeLecture}
             disabled={loading1}
-            className="flex-1 px-6 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition disabled:opacity-50 flex items-center justify-center gap-2"
-          >
-            {loading1 ? <ClipLoader size={20} color="white" /> : <><FaTrash /> Remove Lecture</>}
+            className="flex-1 px-6 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition disabled:opacity-50 flex items-center justify-center gap-2">
+            {loading1 ? (
+              <ClipLoader size={20} color="white" />
+            ) : (
+              <>
+                <FaTrash /> Remove Lecture
+              </>
+            )}
           </button>
           <button
             onClick={editLecture}
             disabled={loading || !lectureTitle.trim()}
-            className="flex-1 px-6 py-3 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition disabled:opacity-50 flex items-center justify-center gap-2"
-          >
-            {loading ? <ClipLoader size={20} color="white" /> : "Update Lecture"}
+            className="flex-1 px-6 py-3 bg-black text-white rounded-lg font-medium hover:bg-gray-800 transition disabled:opacity-50 flex items-center justify-center gap-2">
+            {loading ? (
+              <ClipLoader size={20} color="white" />
+            ) : (
+              "Update Lecture"
+            )}
           </button>
         </div>
       </div>
