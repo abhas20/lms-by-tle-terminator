@@ -46,7 +46,7 @@ const AllCourses = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-gray-50">
+      <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-blue-100">
         <motion.div
           animate={{ rotate: 360 }}
           transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
@@ -62,7 +62,7 @@ const AllCourses = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}
-      className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 px-6 py-10 relative">
+      className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 px-6 py-10 relative">
       {/* Back Button */}
       <motion.button
         whileHover={{ scale: 1.1 }}

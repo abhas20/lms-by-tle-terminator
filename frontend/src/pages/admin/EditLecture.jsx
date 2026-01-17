@@ -104,6 +104,7 @@ function EditLecture() {
     }
     setLoading1(false);
   };
+  console.log(quiz)
 
   if (!selectedLecture) {
     return (
@@ -142,7 +143,7 @@ function EditLecture() {
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-100">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-              <h3 className="font-bold text-lg text-gray-800">Lecture Quiz</h3>
+              <h3 className="font-bold text-lg text-gray-800"> Quiz {quiz.quizTitle || "Demo"}</h3>
               <p className="text-sm text-gray-600">
                 Manage quiz for this lecture
               </p>
@@ -197,7 +198,6 @@ function EditLecture() {
               <p className="font-medium text-gray-800">
                 {quiz.questions.length} Questions
               </p>
-              <p className="text-sm text-gray-600 mt-1">Quiz ID: {quiz._id}</p>
             </div>
           )}
         </div>
